@@ -29,7 +29,7 @@ mybatis-plus:
 #      logic-not-delete-value: 0  //等价于tablelogic注解查询时过滤掉is_deleted=1的元素
 
 minio:
-  endpoint: http://<hostname>192.168.10.101:9000
+  endpoint: http://192.168.10.101:9000
   access-key: minioadmin
   secret-key: minioadmin
   bucket-name: lease

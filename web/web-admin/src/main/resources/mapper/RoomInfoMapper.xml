@@ -4,4 +4,16 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xu.lease.web.admin.mapper.RoomInfoMapper">
 
+
+    <select id="pageItem" resultType="com.xu.lease.web.admin.vo.apartment.ApartmentItemVo">
+        select
+        from apartment_info
+        where is_deleted = 0
+        and provice_id =#{queryVo.proviceId}
+        and city_id = #{queryVo.cityId}
+
+
+    </select>
+    
+
 </mapper>
