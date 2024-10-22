@@ -12,6 +12,13 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public Result error(Exception e) {
         e.printStackTrace();
-        return Result.ok();
+        return Result.fail();
+    }
+//    自定义异常类的处理逻辑
+    @ExceptionHandler(LeaseException.class)
+    @ResponseBody
+    public Result error(LeaseException e){
+        e.printStackTrace();
+        return Result.fail(e.getCode(), e.getMessage());
     }
 }

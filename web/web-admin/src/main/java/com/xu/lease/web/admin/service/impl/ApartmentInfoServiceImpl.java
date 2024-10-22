@@ -3,16 +3,20 @@ package com.xu.lease.web.admin.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.xu.lease.common.exception.LeaseException;
+import com.xu.lease.common.result.ResultCodeEnum;
 import com.xu.lease.model.entity.*;
 import com.xu.lease.model.enums.ItemType;
-import com.xu.lease.web.admin.mapper.ApartmentInfoMapper;
-import com.xu.lease.web.admin.mapper.RoomInfoMapper;
+import com.xu.lease.web.admin.mapper.*;
 import com.xu.lease.web.admin.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xu.lease.web.admin.vo.apartment.ApartmentDetailVo;
 import com.xu.lease.web.admin.vo.apartment.ApartmentItemVo;
 import com.xu.lease.web.admin.vo.apartment.ApartmentQueryVo;
 import com.xu.lease.web.admin.vo.apartment.ApartmentSubmitVo;
+import com.xu.lease.web.admin.vo.fee.FeeValueVo;
 import com.xu.lease.web.admin.vo.graph.GraphVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -38,8 +42,18 @@ public class ApartmentInfoServiceImpl extends ServiceImpl<ApartmentInfoMapper, A
     @Autowired
     private ApartmentFeeValueService apartmentFeeValueService;
     @Autowired
-    private RoomInfoMapper roomInfoMapper;
+    private ApartmentInfoMapper apartmentInfoMapper;
 
+    @Autowired
+    private GraphInfoMapper graphInfoMapper;
+    @Autowired
+    private FacilityInfoMapper facilityInfoMapper;
+    @Autowired
+    private FeeValueMapper feeValueMapper;
+    @Autowired
+    private LabelInfoMapper labelInfoMapper;
+@Autowired
+private  RoomInfoMapper roomInfoMapper;
 
     @Override
     public void saveOrUpdateApartment(ApartmentSubmitVo apartmentSubmitVo) {
@@ -136,8 +150,76 @@ public class ApartmentInfoServiceImpl extends ServiceImpl<ApartmentInfoMapper, A
 
     @Override
     public IPage<ApartmentItemVo> pageItem(Page<ApartmentItemVo> page, ApartmentQueryVo queryVo) {
-        return roomInfoMapper.pageItem(page,queryVo)
-                ;
+        return apartmentInfoMapper.pageItem(page,queryVo);
+    }
+    @Override
+    public ApartmentDetailVo getDetailById(Long id){
+
+//        查询apartment_info
+//        apartmentInfoMapper.selectById(id);
+       ApartmentInfo apartmentInfo =  this.getById(id);
+        if (apartmentInfo == null) {
+            return null;
+        }
+//        查询label
+        List<LabelInfo> labelInfoList = labelInfoMapper.selectListByApartmentId(id);
+
+//        查询graph_info
+//        LambdaQueryWrapper<GraphInfo> queryWrapper = new LambdaQueryWrapper<>();
+//        queryWrapper.eq(GraphInfo::getItemId, id);
+//        queryWrapper.eq(GraphInfo::getItemType, ItemType.APARTMENT);
+//        List<GraphVo> graphVoList = graphInfoService.getObj(queryWrapper);
+        List<GraphVo> graphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.APARTMENT,id);
+//        查询facility_info
+        List<FacilityInfo> facilityInfoList = facilityInfoMapper.selectListByApartmentId(id);
+//        查询fee_value
+        List<FeeValueVo> feeValueVoList = feeValueMapper.selectListByApartmentId(id);
+
+        ApartmentDetailVo adminApartmentDetailVo = new ApartmentDetailVo();
+        BeanUtils.copyProperties(apartmentInfo, adminApartmentDetailVo);
+        adminApartmentDetailVo.setLabelInfoList(labelInfoList);
+        adminApartmentDetailVo.setGraphVoList(graphVoList);
+        adminApartmentDetailVo.setFacilityInfoList(facilityInfoList);
+        adminApartmentDetailVo.setFeeValueVoList(feeValueVoList);
+        return adminApartmentDetailVo;
+
+
+    }
+
+    @Override
+    public void removeByIdApartment(Long id) {
+//        删除公寓信息
+        LambdaQueryWrapper<RoomInfo> roomQueryWrapper = new LambdaQueryWrapper<>();
+        roomQueryWrapper.eq(RoomInfo::getApartmentId, id);
+        Long count = roomInfoMapper.selectCount(roomQueryWrapper);
+        if (count > 0) {
+            throw new LeaseException(ResultCodeEnum.ADMIN_APARTMENT_DELETE_ERROR);
+        }
+//        super.removeById(id);
+        //1.删除GraphInfo
+        LambdaQueryWrapper<GraphInfo> graphInfoQueryWrapper = new LambdaQueryWrapper<>();
+        graphInfoQueryWrapper.eq(GraphInfo::getItemType, ItemType.APARTMENT);
+        graphInfoQueryWrapper.eq(GraphInfo::getItemId, id);
+        graphInfoService.remove(graphInfoQueryWrapper);
+        //2.删除ApartmentLabel
+        LambdaQueryWrapper<ApartmentLabel> apartmentLabelQueryWrapper = new LambdaQueryWrapper<>();
+        apartmentLabelQueryWrapper.eq(ApartmentLabel::getApartmentId, id);
+        apartmentLabelService.remove(apartmentLabelQueryWrapper);
+        //3.删除ApartmentFacility
+        LambdaQueryWrapper<ApartmentFacility> apartmentFacilityQueryWrapper = new LambdaQueryWrapper<>();
+        apartmentFacilityQueryWrapper.eq(ApartmentFacility::getApartmentId, id);
+        apartmentFacilityService.remove(apartmentFacilityQueryWrapper);
+
+        //4.删除ApartmentFeeValue
+        LambdaQueryWrapper<ApartmentFeeValue> apartmentFeeValueLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        apartmentFeeValueLambdaQueryWrapper.eq(ApartmentFeeValue::getApartmentId, id);
+        apartmentFeeValueService.remove(apartmentFeeValueLambdaQueryWrapper);
+        //5.删除ApartmentInfo
+        super.removeById(id);
+
+
+//
+
     }
 }
 

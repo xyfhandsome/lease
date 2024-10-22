@@ -1,5 +1,6 @@
 package com.xu.lease.web.admin.mapper;
 
+import com.xu.lease.common.result.Result;
 import com.xu.lease.model.entity.ApartmentInfo;
 import com.xu.lease.model.enums.LeaseStatus;
 //import com.xu.lease.web.admin.vo.apartment.ApartmentItemVo;
@@ -7,6 +8,9 @@ import com.xu.lease.model.enums.LeaseStatus;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.xu.lease.web.admin.vo.apartment.ApartmentDetailVo;
+import com.xu.lease.web.admin.vo.apartment.ApartmentItemVo;
+import com.xu.lease.web.admin.vo.apartment.ApartmentQueryVo;
 
 /**
 * @author liubo
@@ -15,6 +19,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 * @Entity com.atguigu.lease.model.ApartmentInfo
 */
 public interface ApartmentInfoMapper extends BaseMapper<ApartmentInfo> {
+
+    IPage<ApartmentItemVo> pageItem(Page<ApartmentItemVo> page, ApartmentQueryVo queryVo);
 
 }
 

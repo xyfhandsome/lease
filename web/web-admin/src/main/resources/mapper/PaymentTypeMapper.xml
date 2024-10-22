@@ -4,4 +4,17 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xu.lease.web.admin.mapper.PaymentTypeMapper">
 
+    <select id="selectByRoomId" resultType="com.xu.lease.model.entity.PaymentType">
+        select
+            id,
+            name,
+            pay_month_count,
+            additional_info
+        from payment_type
+        where is_deleted = 0
+          and id
+            in (select patment_type_id
+                from room_payment_type
+                where room_id = #{id})
+    </select>
 </mapper>

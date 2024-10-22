@@ -1,5 +1,6 @@
 package com.xu.lease.web.admin.service;
 
+import com.xu.lease.common.result.Result;
 import com.xu.lease.model.entity.ApartmentInfo;
 import com.xu.lease.web.admin.vo.apartment.ApartmentDetailVo;
 import com.xu.lease.web.admin.vo.apartment.ApartmentItemVo;
@@ -19,4 +20,8 @@ public interface ApartmentInfoService extends IService<ApartmentInfo> {
     void saveOrUpdateApartment(ApartmentSubmitVo apartmentSubmitVo);
 
     IPage<ApartmentItemVo> pageItem(Page<ApartmentItemVo> page,ApartmentQueryVo queryVo);
+
+    ApartmentDetailVo getDetailById(Long id);
+
+    void removeByIdApartment(Long id);
 }
