@@ -2,10 +2,13 @@ server:
   port: 8080
 
 spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-#    url: jdbc:mysql://192.168.10.101:3306/lease?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2b8
-    url: jdbc:mysql://10.78.240.100:3307/lease?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2b8
+    url: jdbc:mysql://192.168.10.101:3306/lease?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2b8
+#    url: jdbc:mysql://10.78.240.100:3307/lease?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2b8
     username: root
     password: Atguigu.123
     hikari:
@@ -39,6 +42,15 @@ minio:
 
 springdoc:
   default-flat-param-object: true
+
+#  date格式 时区 全局配置
+
+#spring:
+#  jackson:
+#    date-format: yyyy-MM-dd HH:mm:ss
+#    time-zone: GMT+8
+
+
 
 
 
