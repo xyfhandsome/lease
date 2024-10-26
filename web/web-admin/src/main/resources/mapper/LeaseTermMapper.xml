@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xu.lease.web.admin.mapper.LeaseTermMapper">
+<mapper namespace="com.atguigu.lease.web.admin.mapper.LeaseTermMapper">
 
-    <select id="selectByRoomId" resultType="com.xu.lease.model.entity.LeaseTerm">
+    <select id="selectByRoomId" resultType="com.atguigu.lease.model.entity.LeaseTerm">
         select
             id,
             month_count,
